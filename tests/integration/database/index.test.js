@@ -2,6 +2,7 @@ const database = require('../../../src/database')
 
 const {
   bootstrap,
+  sequelize,
 } = database
 
 describe('Database', () => {
@@ -10,6 +11,8 @@ describe('Database', () => {
       let success = true
 
       beforeAll(async () => {
+        sequelize.authenticate = jest.fn()
+
         try {
           await bootstrap()
         } catch (err) {
