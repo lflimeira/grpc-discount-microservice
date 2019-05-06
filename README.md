@@ -1,1 +1,1 @@
-# grpc-microservice-communication
+# Discount Service Project
