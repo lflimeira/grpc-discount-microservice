@@ -1,57 +1,29 @@
 require('dotenv').config({ path: process.env.DOTENV_PATH })
-const express = require('express')
-const bodyParser = require('body-parser')
+const grpc = require('grpc')
+const protoLoader = require('@grpc/proto-loader')
 
-const database = require('../database')
-const errorHandler = require('../controllers/middlewares/error')
-const redirectHTTP = require('../controllers/middlewares/redirect-http')
-const responseHandler = require('../controllers/middlewares/response')
-const routeNotFoundHandler = require('../controllers/middlewares/notfound')
-const { httpLogger, logger } = require('../lib/logger')
-const userRouter = require('../routes/user')
+const { logger } = require('../lib/logger')
 
-const app = express()
+const PROTO_PATH = `${__dirname}/../../discount.proto`
 
-const allRoutesExceptHealthCheck = /^\/(?!_health_check(\/|$)).*$/i
-
-app.use(bodyParser.json())
-app.use(httpLogger)
-app.use(allRoutesExceptHealthCheck, redirectHTTP)
-
-app.disable('x-powered-by')
-
-app.get(
-  '/_health_check',
-  (req, res) => res.send()
-)
-
-app.use(
-  '/user',
-  userRouter
-)
-
-app.use(routeNotFoundHandler)
-app.use(errorHandler)
-app.use(responseHandler)
-
-const bootstrap = async () => {
-  try {
-    await database.bootstrap()
-    await app.listen(process.env.PORT)
-
-    logger.info('Server up and running', {
-      port: process.env.PORT,
-      nodeEnv: process.env.NODE_ENV,
-    })
-  } catch (err) {
-    logger.error('Error bootstraping application', {
-      stack: err.stack,
-    })
+const packageDefinition = protoLoader.loadSync(
+  PROTO_PATH,
+  {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
   }
-}
+)
 
-if (process.env.NODE_ENV !== 'test') {
-  bootstrap()
-}
+grpc.loadPackageDefinition(packageDefinition)
 
-module.exports = app
+const port = process.env.PORT || 5678
+
+const server = new grpc.Server()
+server.bind(`127.0.0.1:${port}`, grpc.ServerCredentials.createInsecure())
+logger.info(`Server running at http://127.0.0.1:${port}`)
+server.start()
+
+module.exports = server
