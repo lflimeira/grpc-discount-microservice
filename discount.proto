@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package discount;
-
-message Discount {
-    string product_id = 1;
-    string user_id = 2;
-}

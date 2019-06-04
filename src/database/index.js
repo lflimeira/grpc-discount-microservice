@@ -26,7 +26,6 @@ const sequelize = new Sequelize(
     host,
     port,
     dialect,
-    operatorsAliases: false,
     pool: {
       max: 5,
       min: 0,
@@ -35,7 +34,7 @@ const sequelize = new Sequelize(
     },
     define: {
       freezeTableName: true,
-      paranoid: true,
+      paranoid: false,
     },
     logging,
   }
