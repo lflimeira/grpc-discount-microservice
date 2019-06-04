@@ -1,29 +1,47 @@
 require('dotenv').config({ path: process.env.DOTENV_PATH })
-const grpc = require('grpc')
 const protoLoader = require('@grpc/proto-loader')
+const grpc = require('grpc')
 
+const database = require('../database')
 const { logger } = require('../lib/logger')
+const userController = require('../controllers/user')
 
-const PROTO_PATH = `${__dirname}/../../discount.proto`
-
-const packageDefinition = protoLoader.loadSync(
-  PROTO_PATH,
-  {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-  }
-)
-
-grpc.loadPackageDefinition(packageDefinition)
-
+const PROTO_PATH = `${__dirname}/../proto/discount.proto`
+const options = {
+  keepCase: true,
+  longs: String,
+  enums: String,
+  defaults: true,
+  oneofs: true,
+}
+const protoDefinition = protoLoader.loadSync(PROTO_PATH, options)
+const { discount } = grpc.loadPackageDefinition(protoDefinition)
 const port = process.env.PORT || 5678
-
 const server = new grpc.Server()
-server.bind(`127.0.0.1:${port}`, grpc.ServerCredentials.createInsecure())
-logger.info(`Server running at http://127.0.0.1:${port}`)
+
+server.addService(discount.UserService.service, { list: userController.list })
+server.bind(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure())
+
+
+const bootstrap = () => {
+  try {
+    return database.bootstrap()
+  } catch (err) {
+    logger.error('Error bootstraping application', {
+      stack: err.stack,
+    })
+    return err.message
+  }
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  bootstrap()
+}
+
 server.start()
+logger.info(`Server running at http://0.0.0.0:${port}`, {
+  port,
+  nodeEnv: process.env.NODE_ENV,
+})
 
 module.exports = server

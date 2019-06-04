@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package discount;
+
+service UserService {
+    rpc List (Empty) returns (UserList) {}
+}
+message Empty {}
+
+message UserList {
+    repeated User users = 1;
+}
+
+message User {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string date_of_birth = 4;
+}
+
+
