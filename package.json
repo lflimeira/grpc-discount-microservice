@@ -22,7 +22,7 @@
   "author": "Luiz Felipe Limeira <@lflimeira02>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "4.7.2",
+    "eslint": "4.18.2",
     "eslint-config-pagarme-base": "2.0.0",
     "eslint-plugin-import": "2.7.0",
     "jest": "23.5.0",
