@@ -29,14 +29,22 @@ const list = async () => {
     return userList
   } catch (error) {
     logger.error(error.message)
-    return new UserError('Error listing user')
+    throw new UserError('Error listing user')
   }
 }
 
 module.exports = {
   list: async (_, callback) => {
-    const users = await list()
-    callback(null, users)
-    return users
+    try {
+      const users = await list()
+      callback(null, users)
+      return users
+    } catch (error) {
+      callback({
+        code: error.code,
+        message: error.message,
+      })
+      return error
+    }
   },
 }
