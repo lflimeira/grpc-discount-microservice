@@ -1,10 +1,10 @@
 class UserError extends Error {
-  constructor (message, statusCode = 400) {
+  constructor (message, code = 13) {
     super(message)
 
     this.name = 'UserError'
     this.type = 'user'
-    this.statusCode = statusCode
+    this.code = code
   }
 }
 
