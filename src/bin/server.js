@@ -19,7 +19,10 @@ const { discount } = grpc.loadPackageDefinition(protoDefinition)
 const port = process.env.PORT || 5678
 const server = new grpc.Server()
 
-server.addService(discount.UserService.service, { list: userController.list })
+server.addService(discount.UserService.service, {
+  list: userController.list,
+  get: userController.get,
+})
 server.bind(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure())
 
 
