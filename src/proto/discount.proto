@@ -5,6 +5,7 @@ package discount;
 service UserService {
     rpc List (Empty) returns (UserList) {}
     rpc Get (UserRequest) returns (User) {}
+    rpc GetDiscount (UserRequest) returns (Discount) {}
 }
 message Empty {}
 
@@ -17,6 +18,10 @@ message User {
     string first_name = 2;
     string last_name = 3;
     string date_of_birth = 4;
+}
+
+message Discount {
+    int32 percent = 1;
 }
 
 message UserRequest {

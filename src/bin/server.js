@@ -5,6 +5,7 @@ const grpc = require('grpc')
 const database = require('../database')
 const { logger } = require('../lib/logger')
 const userController = require('../controllers/user')
+const discoutController = require('../controllers/discount')
 
 const PROTO_PATH = `${__dirname}/../proto/discount.proto`
 const options = {
@@ -22,6 +23,7 @@ const server = new grpc.Server()
 server.addService(discount.UserService.service, {
   list: userController.list,
   get: userController.get,
+  getDiscount: discoutController.getDiscount,
 })
 server.bind(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure())
 
