@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 const { logger } = require('../lib/logger')
 const { UserError } = require('../helpers/errors')
 const database = require('../database')
@@ -14,16 +16,16 @@ const getDiscount = async (searchID) => {
       throw new UserError('User not found')
     }
 
-    const birthday = new Date(user.date_of_birth)
-    const today = new Date()
+    const today = moment()
+    const birthday = user.date_of_birth
     let discount = 0
 
-    if (birthday.getDate() === today.getDate()
-      && birthday.getMonth() === today.getMonth()) {
+    if (birthday.getDate() === today.date()
+      && birthday.getMonth() === today.month()) {
       discount = 5
     }
 
-    if (today.getDate() === 25 && today.getMonth() === 10) {
+    if (today.date() === 25 && today.month() === 10) {
       discount = 10
     }
 
