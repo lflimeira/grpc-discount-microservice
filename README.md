@@ -124,7 +124,7 @@ As this microservice uses the gRPC protocol you can't use it as a http endpoint,
 
 #### Request
 
-`discount.UserService/Get`
+`discount.UserService/GetDiscount`
 
 **Body**
 ```json
